@@ -1,0 +1,258 @@
+{
+  "datasets": [
+    {
+      "name": "3994a58a",
+      "displayName": "Untitled dataset",
+      "queryLines": [
+        "USE CATALOG `workspace`;\n",
+        "USE SCHEMA `bronze`;\n",
+        "\n",
+        "SELECT\n",
+        "  DATE(InvoiceDate) AS invoice_date,\n",
+        "  ROUND(SUM(Quantity * UnitPrice), 2) AS daily_revenue\n",
+        "FROM workspace.retail.online_retail\n",
+        "WHERE Quantity > 0\n",
+        "GROUP BY DATE(InvoiceDate)\n",
+        "ORDER BY invoice_date;\n"
+      ]
+    },
+    {
+      "name": "c25e3d37",
+      "displayName": "Untitled dataset",
+      "queryLines": [
+        "USE CATALOG `workspace`;\n",
+        "USE SCHEMA `bronze`;\n",
+        "\n",
+        "SELECT\n",
+        "  Country,\n",
+        "  ROUND(SUM(Quantity * UnitPrice), 2) AS total_revenue\n",
+        "FROM workspace.retail.online_retail\n",
+        "WHERE Quantity > 0\n",
+        "GROUP BY Country\n",
+        "ORDER BY total_revenue DESC\n",
+        "LIMIT 10;\n"
+      ]
+    },
+    {
+      "name": "a0cd9eb6",
+      "displayName": "Untitled dataset",
+      "queryLines": [
+        "USE CATALOG `workspace`;\n",
+        "USE SCHEMA `bronze`;\n",
+        "\n",
+        "SELECT\n",
+        "  Description,\n",
+        "  SUM(Quantity) AS total_units_sold\n",
+        "FROM workspace.retail.online_retail\n",
+        "WHERE Quantity > 0\n",
+        "GROUP BY Description\n",
+        "ORDER BY total_units_sold DESC\n",
+        "LIMIT 15;\n"
+      ]
+    },
+    {
+      "name": "19b94b70",
+      "displayName": "Untitled dataset",
+      "queryLines": [
+        "USE CATALOG `workspace`;\n",
+        "USE SCHEMA `bronze`;\n",
+        "\n",
+        "SELECT\n",
+        "  HOUR(InvoiceDate) AS hour_of_day,\n",
+        "  ROUND(SUM(Quantity * UnitPrice), 2) AS revenue\n",
+        "FROM workspace.retail.online_retail\n",
+        "WHERE Quantity > 0\n",
+        "GROUP BY HOUR(InvoiceDate)\n",
+        "ORDER BY hour_of_day;\n"
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "name": "493f4d9d",
+      "displayName": "analysis_dashboard",
+      "layout": [
+        {
+          "widget": {
+            "name": "3211afd1",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "3994a58a",
+                  "fields": [
+                    {
+                      "name": "invoice_date",
+                      "expression": "`invoice_date`"
+                    },
+                    {
+                      "name": "sum(daily_revenue)",
+                      "expression": "SUM(`daily_revenue`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "invoice_date",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "sum(daily_revenue)",
+                  "displayName": "daily_revenue",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "frame": {
+                "title": "Revenue Trend overtime",
+                "showTitle": true
+              },
+              "mark": {
+                "layout": "layer"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 6,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "fc56e0a5",
+            "queries": [
+              {
+                "name": "840d77e74c7545229c9c1c5a376cf93c",
+                "query": {
+                  "datasetName": "c25e3d37",
+                  "fields": [
+                    {
+                      "name": "Country",
+                      "expression": "`Country`"
+                    },
+                    {
+                      "name": "column_9c12425d62",
+                      "expression": "SUM(`total_revenue`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 0,
+              "viz_spec": {
+                "display_name": "TOP Revenue Countries",
+                "viz_type": "CHART",
+                "serialized_options": "{\"isAggregationOn\":true,\"series\":{\"error_y\":{\"type\":\"data\",\"visible\":true},\"stacking\":null},\"coefficient\":1,\"yAxis\":[{\"type\":\"-\"},{\"opposite\":true,\"type\":\"-\"}],\"columnConfigurationMap\":{\"x\":{\"column\":\"Country\",\"id\":\"column_9c12425d61\"},\"y\":[{\"column\":\"total_revenue\",\"id\":\"column_9c12425d62\",\"transform\":\"SUM\"}]},\"alignYAxesAtZero\":true,\"direction\":{\"type\":\"counterclockwise\"},\"swappedAxes\":true,\"percentFormat\":\"0[.]00%\",\"textFormat\":\"\",\"legend\":{\"traceorder\":\"normal\"},\"globalSeriesType\":\"column\",\"version\":2,\"sizemode\":\"diameter\",\"seriesOptions\":{\"column_9c12425d62\":{\"name\":\"total_revenue\",\"yAxis\":0}},\"error_y\":{\"type\":\"data\",\"visible\":true},\"sortX\":true,\"showDataLabels\":false,\"missingValuesAsZero\":true,\"useAggregationsUi\":true,\"numberFormat\":\"0,0.[00000]\",\"dateTimeFormat\":\"DD/MM/YYYY HH:mm\",\"sortY\":true,\"valuesOptions\":{},\"xAxis\":{\"labels\":{\"enabled\":true},\"type\":\"-\"}}",
+                "query_name": "840d77e74c7545229c9c1c5a376cf93c"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 12,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "a9622d00",
+            "queries": [
+              {
+                "name": "d8d6b21b2d4f4250a1749fa2b85a5028",
+                "query": {
+                  "datasetName": "a0cd9eb6",
+                  "fields": [
+                    {
+                      "name": "Description",
+                      "expression": "`Description`"
+                    },
+                    {
+                      "name": "column_9c12425d117",
+                      "expression": "SUM(`total_units_sold`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 0,
+              "viz_spec": {
+                "display_name": "Product Demand",
+                "viz_type": "CHART",
+                "serialized_options": "{\"isAggregationOn\":true,\"series\":{\"error_y\":{\"type\":\"data\",\"visible\":true},\"stacking\":null},\"coefficient\":1,\"yAxis\":[{\"type\":\"-\"},{\"opposite\":true,\"type\":\"-\"}],\"columnConfigurationMap\":{\"x\":{\"column\":\"Description\",\"id\":\"column_9c12425d116\"},\"y\":[{\"column\":\"total_units_sold\",\"id\":\"column_9c12425d117\",\"transform\":\"SUM\"}]},\"alignYAxesAtZero\":true,\"direction\":{\"type\":\"counterclockwise\"},\"swappedAxes\":true,\"percentFormat\":\"0[.]00%\",\"textFormat\":\"\",\"legend\":{\"traceorder\":\"normal\"},\"globalSeriesType\":\"column\",\"version\":2,\"sizemode\":\"diameter\",\"seriesOptions\":{\"column_9c12425d117\":{\"color\":\"#00A972\",\"name\":\"total_units_sold\",\"yAxis\":0}},\"error_y\":{\"type\":\"data\",\"visible\":true},\"sortX\":true,\"showDataLabels\":false,\"missingValuesAsZero\":true,\"useAggregationsUi\":true,\"numberFormat\":\"0,0.[00000]\",\"dateTimeFormat\":\"DD/MM/YYYY HH:mm\",\"sortY\":true,\"valuesOptions\":{},\"xAxis\":{\"labels\":{\"enabled\":true},\"type\":\"-\"}}",
+                "query_name": "d8d6b21b2d4f4250a1749fa2b85a5028"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "8d380764",
+            "queries": [
+              {
+                "name": "3165b73ca506412fb4eed1f67f7600fc",
+                "query": {
+                  "datasetName": "19b94b70",
+                  "fields": [
+                    {
+                      "name": "hour_of_day",
+                      "expression": "`hour_of_day`"
+                    },
+                    {
+                      "name": "column_9c12425d135",
+                      "expression": "SUM(`revenue`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 0,
+              "viz_spec": {
+                "display_name": "Hourly Sales",
+                "viz_type": "CHART",
+                "serialized_options": "{\"isAggregationOn\":true,\"series\":{\"error_y\":{\"type\":\"data\",\"visible\":true},\"stacking\":null},\"coefficient\":1,\"yAxis\":[{\"type\":\"-\"},{\"opposite\":true,\"type\":\"-\"}],\"columnConfigurationMap\":{\"x\":{\"column\":\"hour_of_day\",\"id\":\"column_9c12425d134\"},\"y\":[{\"column\":\"revenue\",\"id\":\"column_9c12425d135\",\"transform\":\"SUM\"}]},\"alignYAxesAtZero\":true,\"direction\":{\"type\":\"counterclockwise\"},\"swappedAxes\":false,\"percentFormat\":\"0[.]00%\",\"textFormat\":\"\",\"legend\":{\"traceorder\":\"normal\"},\"globalSeriesType\":\"line\",\"version\":2,\"sizemode\":\"diameter\",\"seriesOptions\":{\"column_9c12425d135\":{\"color\":\"#00A972\",\"name\":\"revenue\",\"type\":\"line\",\"yAxis\":0}},\"error_y\":{\"type\":\"data\",\"visible\":true},\"sortX\":true,\"showDataLabels\":false,\"missingValuesAsZero\":true,\"useAggregationsUi\":true,\"numberFormat\":\"0,0.[00000]\",\"dateTimeFormat\":\"DD/MM/YYYY HH:mm\",\"sortY\":true,\"valuesOptions\":{},\"xAxis\":{\"labels\":{\"enabled\":true},\"type\":\"-\"}}",
+                "query_name": "3165b73ca506412fb4eed1f67f7600fc"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 18,
+            "width": 6,
+            "height": 6
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED"
+    },
+    "applyModeEnabled": false
+  }
+}
